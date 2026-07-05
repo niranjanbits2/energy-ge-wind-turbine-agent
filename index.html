@@ -219,12 +219,29 @@ function sendMsg(){
     else {
       const ql=q.toLowerCase();
       let r2=null;
+      // Turbine status & monitoring
       if(ql.includes('spare')||ql.includes('stock')||ql.includes('parts')) r2=R["What spare parts should we keep in stock?"];
-      else if(ql.includes('quarterly')||(ql.includes('maintenance')&&ql.includes('schedule'))) r2=R["What is the quarterly maintenance schedule?"];
-      else if(ql.includes('failure')||ql.includes('top fail')) r2=R["What are the top failure modes for wind turbines?"];
-      else if(ql.includes('t-247')||ql.includes('t247')||ql.includes('status')||ql.includes('check turbine')) r2=R["Check the current status of turbine T-247"];
-      else if(ql.includes('fc-101')||ql.includes('fc101')||ql.includes('fault code')) r2=R["Diagnose fault code FC-101"];
-      else if(ql.includes('work order')||ql.includes('workorder')||ql.includes('raise')) r2=R["Raise a work order for turbine T-247, fault FC-101, priority HIGH"];
+      else if(ql.includes('quarterly')||(ql.includes('maintenance')&&(ql.includes('schedule')||ql.includes('check')))) r2=R["What is the quarterly maintenance schedule?"];
+      else if(ql.includes('failure mode')||ql.includes('top fail')||(ql.includes('failure')&&ql.includes('wind'))||(ql.includes('common')&&ql.includes('fail'))) r2=R["What are the top failure modes for wind turbines?"];
+      else if((ql.includes('t-247')||ql.includes('t247')||ql.includes('turbine t'))&&(ql.includes('status')||ql.includes('check')||ql.includes('current')||ql.includes('running')||ql.includes('monitor')||ql.includes('normal'))) r2=R["Check the current status of turbine T-247"];
+      else if(ql.includes('fault state')||ql.includes('in fault')||(ql.includes('turbine')&&ql.includes('fault')&&!ql.includes('code'))) r2=R["Check the current status of turbine T-247"];
+      else if(ql.includes('telemetry')||ql.includes('power output')||(ql.includes('turbine')&&ql.includes('running'))||(ql.includes('turbine')&&ql.includes('perform'))) r2=R["Check the current status of turbine T-247"];
+      else if(ql.includes('fc-101')||ql.includes('fc101')||(ql.includes('fault')&&ql.includes('101'))||ql.includes('gearbox oil temp')||(ql.includes('fault code')&&ql.includes('fix'))) r2=R["Diagnose fault code FC-101"];
+      else if(ql.includes('fc-102')||ql.includes('oil pressure')||ql.includes('gearbox oil pressure')) r2=R["Diagnose fault code FC-101"];
+      else if(ql.includes('fc-201')||ql.includes('generator overheat')||ql.includes('generator heat')) r2=R["Diagnose fault code FC-101"];
+      else if(ql.includes('fc-202')||ql.includes('vibration')||(ql.includes('generator')&&ql.includes('vibrat'))) r2=R["Diagnose fault code FC-101"];
+      else if(ql.includes('fc-301')||ql.includes('pitch system')||ql.includes('blade pitch')) r2=R["Diagnose fault code FC-101"];
+      else if(ql.includes('fc-601')||ql.includes('scada comm')||ql.includes('communication loss')) r2=R["Diagnose fault code FC-101"];
+      else if(ql.includes('work order')||ql.includes('workorder')||ql.includes('raise')||ql.includes('log a work')||ql.includes('create a work')||(ql.includes('maintenance')&&ql.includes('247'))) r2=R["Raise a work order for turbine T-247, fault FC-101, priority HIGH"];
+      else if(ql.includes('mtbf')||ql.includes('mttr')||ql.includes('mean time')||ql.includes('availability')||ql.includes('capacity factor')||(ql.includes('kpi'))||(ql.includes('palm beach'))) r2=R["What are the top failure modes for wind turbines?"];
+      else if(ql.includes('annual')||ql.includes('overhaul')||(ql.includes('maintenance')&&ql.includes('annual'))||(ql.includes('5 year')||ql.includes('five year'))) r2=R["What is the quarterly maintenance schedule?"];
+      else if(ql.includes('gearbox')||ql.includes('oil change')||ql.includes('oil type')||ql.includes('mobilgear')) r2=R["What spare parts should we keep in stock?"];
+      else if(ql.includes('scada')||ql.includes('dashboard')||ql.includes('monitor daily')||ql.includes('anomaly')) r2=R["What are the top failure modes for wind turbines?"];
+      else if(ql.includes('startup')||ql.includes('start up')||ql.includes('start turbine')||ql.includes('restart')) r2=R["What is the quarterly maintenance schedule?"];
+      else if(ql.includes('tower')||ql.includes('access')||ql.includes('safety')||ql.includes('loto')||ql.includes('harness')) r2=R["What is the quarterly maintenance schedule?"];
+      else if(ql.includes('blade')||ql.includes('erosion')||ql.includes('lightning')||ql.includes('ice')) r2=R["What is the quarterly maintenance schedule?"];
+      else if(ql.includes('component')||ql.includes('specification')||ql.includes('spec')||ql.includes('generator spec')||ql.includes('gearbox spec')) r2=R["What spare parts should we keep in stock?"];
+      else if(ql.includes('reactive power')||ql.includes('power factor')||ql.includes('grid')||ql.includes('voltage')) r2=R["What are the top failure modes for wind turbines?"];
       if(r2) addMsg('agent',r2.text,r2.tools);
       else addMsg('agent','Try the quick buttons above or type: "Check turbine T-247" / "Quarterly maintenance schedule" / "Spare parts stock" / "Top failure modes"');
     }
