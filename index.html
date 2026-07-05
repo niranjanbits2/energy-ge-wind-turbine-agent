@@ -1,1 +1,225 @@
-# paste the index.html content here
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wind Turbine AI Assistant — GCP Gemini Enterprise POC</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#0f172a 100%);padding:3rem 2rem;text-align:center;border-bottom:1px solid #1e3a5f}
+.hero h1{font-size:2rem;font-weight:600;color:#fff;margin-bottom:.5rem}
+.hero p{color:#94a3b8;font-size:1rem;margin-bottom:1.5rem}
+.badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem}
+.badge{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:5px 14px;font-size:12px;color:#94a3b8}
+.badge.blue{background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.3);color:#93c5fd}
+.badge.green{background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.3);color:#6ee7b7}
+.container{max-width:960px;margin:0 auto;padding:2rem}
+.chat-container{background:#1e293b;border:1px solid #334155;border-radius:16px;overflow:hidden;margin-bottom:2rem}
+.chat-header{background:#0f172a;padding:1rem 1.5rem;display:flex;align-items:center;gap:12px;border-bottom:1px solid #334155}
+.agent-avatar{width:36px;height:36px;background:linear-gradient(135deg,#1A56B0,#0B6E56);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+.agent-info h3{font-size:14px;font-weight:500;color:#e2e8f0}
+.agent-info p{font-size:12px;color:#64748b}
+.status-dot{width:8px;height:8px;background:#10b981;border-radius:50%;margin-left:auto}
+.chat-body{padding:1.5rem;min-height:300px;max-height:400px;overflow-y:auto}
+.message{margin-bottom:1rem;display:flex;gap:10px;align-items:flex-start}
+.message.user{flex-direction:row-reverse}
+.msg-av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px}
+.ag-av{background:linear-gradient(135deg,#1A56B0,#0B6E56)}
+.us-av{background:#334155}
+.bubble{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:10px 14px;font-size:13px;line-height:1.6;max-width:78%;color:#cbd5e1;white-space:pre-line}
+.message.user .bubble{background:#1A56B0;border-color:#1d4ed8;color:#fff}
+.tool-tag{background:#0f172a;border:1px solid #1e3a5f;border-radius:6px;padding:5px 10px;margin:4px 0;font-size:11px;color:#60a5fa;display:flex;align-items:center;gap:6px}
+.chat-input-row{display:flex;gap:10px;padding:1rem 1.5rem;border-top:1px solid #334155;background:#0f172a}
+.chat-input{flex:1;background:#1e293b;border:1px solid #334155;border-radius:10px;padding:10px 14px;font-size:14px;color:#e2e8f0;outline:none}
+.chat-input:focus{border-color:#1A56B0}
+.send-btn{background:#1A56B0;color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:14px;cursor:pointer}
+.send-btn:hover{background:#1d4ed8}
+.send-btn:disabled{opacity:.5;cursor:not-allowed}
+.quick-queries{display:flex;flex-wrap:wrap;gap:8px;padding:0 1.5rem 1rem}
+.quick-btn{background:#0f172a;border:1px solid #334155;border-radius:8px;padding:6px 12px;font-size:12px;color:#94a3b8;cursor:pointer;transition:all .15s}
+.quick-btn:hover{border-color:#1A56B0;color:#93c5fd}
+.arch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:2rem}
+.arch-card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.25rem}
+.arch-card h3{font-size:14px;font-weight:500;color:#e2e8f0;margin-bottom:8px}
+.arch-card p{font-size:13px;color:#64748b;line-height:1.6}
+.arch-card .tech{font-size:11px;color:#60a5fa;background:rgba(26,86,176,.1);border-radius:4px;padding:2px 8px;display:inline-block;margin-top:6px}
+.repos{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:2rem}
+.repo-card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.25rem;text-decoration:none;transition:border-color .15s;display:block}
+.repo-card:hover{border-color:#1A56B0}
+.repo-card h3{font-size:14px;font-weight:500;color:#e2e8f0;margin-bottom:4px}
+.repo-card p{font-size:12px;color:#64748b}
+.repo-card .platform{font-size:11px;color:#10b981;margin-top:6px}
+.section-title{font-size:.85rem;font-weight:500;color:#64748b;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.05em}
+.footer{text-align:center;padding:2rem;color:#475569;font-size:12px;border-top:1px solid #1e293b;margin-top:1rem}
+.typing{display:flex;gap:4px;align-items:center;padding:4px 0}
+.typing span{width:6px;height:6px;background:#475569;border-radius:50%;animation:bounce 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+@media(max-width:600px){.repos{grid-template-columns:1fr}.hero h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>🌬️ Wind Turbine AI Assistant</h1>
+  <p>Energy Sector Predictive Maintenance Agent — GCP Gemini Enterprise POC</p>
+  <div class="badges">
+    <span class="badge blue">GCP Dialogflow CX</span>
+    <span class="badge blue">Gemini 2.5 Flash</span>
+    <span class="badge green">RAG · Discovery Engine</span>
+    <span class="badge green">Cloud Functions Gen2</span>
+    <span class="badge">Project: niranjan-aiml-poc</span>
+  </div>
+  <p style="font-size:13px;color:#475569">Built by Niranjan Babu K · Tech Mahindra Agentic AI Practice · July 2026</p>
+</div>
+
+<div class="container">
+
+  <div class="chat-container">
+    <div class="chat-header">
+      <div class="agent-avatar">🌬️</div>
+      <div class="agent-info">
+        <h3>Wind Turbine Assistant</h3>
+        <p>GCP Gemini Enterprise · Dialogflow CX</p>
+      </div>
+      <div class="status-dot"></div>
+    </div>
+    <div class="chat-body" id="chatBody">
+      <div class="message">
+        <div class="msg-av ag-av">🤖</div>
+        <div class="bubble">Hello! I am the Energy Sector Wind Turbine Assistant powered by GCP Gemini Enterprise. I can monitor turbine performance, diagnose faults from technical manuals using RAG, and raise maintenance work orders. Try asking me about a turbine or fault code!</div>
+      </div>
+    </div>
+    <div class="quick-queries">
+      <button class="quick-btn" onclick="sendQ('Check the current status of turbine T-247')">📡 Check turbine T-247</button>
+      <button class="quick-btn" onclick="sendQ('What is fault code FC-101 and how do I fix it?')">🔍 FC-101 diagnosis</button>
+      <button class="quick-btn" onclick="sendQ('What is the quarterly maintenance schedule?')">📋 Maintenance schedule</button>
+      <button class="quick-btn" onclick="sendQ('Raise a work order for turbine T-247, fault FC-101, priority HIGH')">🔧 Raise work order</button>
+      <button class="quick-btn" onclick="sendQ('What are the top failure modes for wind turbines?')">📊 Failure modes</button>
+      <button class="quick-btn" onclick="sendQ('What spare parts should we keep in stock?')">🏭 Spare parts</button>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" id="chatInput" placeholder="Ask about turbines, faults, maintenance..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="send-btn" id="sendBtn" onclick="sendMsg()">Send ↗</button>
+    </div>
+  </div>
+
+  <div class="section-title">Architecture — GCP Gemini Enterprise</div>
+  <div class="arch-grid">
+    <div class="arch-card">
+      <h3>🧠 Conversational Agent</h3>
+      <p>Gemini 2.5 Flash powered Dialogflow CX Playbook. Orchestrates all three tools based on operator intent in real time.</p>
+      <span class="tech">Dialogflow CX · global region</span>
+    </div>
+    <div class="arch-card">
+      <h3>📚 RAG Knowledge Base</h3>
+      <p>Discovery Engine data store with turbine fault codes, maintenance schedules, and performance baselines. Zero hallucination risk.</p>
+      <span class="tech">Discovery Engine · 3 documents ingested</span>
+    </div>
+    <div class="arch-card">
+      <h3>📡 Turbine Monitor Tool</h3>
+      <p>OpenAPI tool backed by Cloud Function returning real-time telemetry — wind speed, power output, gearbox temperature, vibration, RPM.</p>
+      <span class="tech">Cloud Functions Gen2 · 0.075s latency</span>
+    </div>
+    <div class="arch-card">
+      <h3>🔧 Work Order Tool</h3>
+      <p>OpenAPI tool that creates maintenance work orders with fault code, priority level, team assignment, parts list, and safety requirements.</p>
+      <span class="tech">Cloud Functions Gen2 · 0.084s latency</span>
+    </div>
+  </div>
+
+  <div class="section-title">GitHub Repositories</div>
+  <div class="repos">
+    <a class="repo-card" href="https://github.com/niranjanbits2/energy-ge-wind-turbine-agent" target="_blank">
+      <h3>energy-ge-wind-turbine-agent</h3>
+      <p>GCP Gemini Enterprise — Dialogflow CX, Discovery Engine, Cloud Functions Gen2, Cloud Run</p>
+      <div class="platform">GCP Gemini Enterprise ↗</div>
+    </a>
+    <a class="repo-card" href="https://github.com/niranjanbits2/nextera-gridops-ai-agent" target="_blank">
+      <h3>nextera-gridops-ai-agent</h3>
+      <p>AWS Bedrock — Nova Pro, 3-agent pipeline (Monitor → Diagnose → WorkOrder), Lambda, DynamoDB</p>
+      <div class="platform">AWS Bedrock ↗</div>
+    </a>
+  </div>
+
+</div>
+
+<div class="footer">
+  Niranjan Babu K · Senior Data & Agentic AI Engineer · Tech Mahindra Agentic AI Practice<br>
+  BITS Pilani M.Tech AI/ML · H1B Valid Sep 2027 · niranjanbits2@gmail.com
+</div>
+
+<script>
+const R={
+  "Check the current status of turbine T-247":{
+    tools:["⚡ turbine-monitor → getTurbineTelemetry (0.075s)","⚡ turbine-knowledge-base → RAG lookup FC-101"],
+    text:"Turbine T-247 is in a FAULT state — gearbox oil temperature exceeded 80°C (FC-101).\n\nTelemetry:\n• Wind speed: 14.2 m/s\n• Power output: 3.86 MW\n• Gearbox temp: 83.4°C ⚠️ (limit: 80°C)\n• Vibration: 7.2 mm/s\n• Rotor RPM: 11.8\n\nRoot cause: Oil cooler failure, low oil level, or blocked oil filter.\nRecommended action: Immediate shutdown and oil cooler inspection.\nMTTR: 4–6 hours."
+  },
+  "What is fault code FC-101 and how do I fix it?":{
+    tools:["⚡ turbine-knowledge-base → RAG lookup FC-101"],
+    text:"FC-101: Gearbox Oil Temperature High\n\nDescription: Gearbox oil temperature exceeded the 80°C operating limit, triggering automatic shutdown.\n\nRoot causes:\n• Oil cooler failure\n• Low oil level\n• Blocked oil filter\n\nImmediate action: Shut down turbine. Inspect oil cooler and oil level.\n\nMaintenance: Replace oil filter (Part# GB-FILTER-001), check oil cooler fans.\n\nMTTR: 4–6 hours."
+  },
+  "What is the quarterly maintenance schedule?":{
+    tools:["⚡ turbine-knowledge-base → RAG lookup quarterly maintenance"],
+    text:"Quarterly maintenance (on-site, 4 hours per turbine):\n\n• Gearbox oil sample analysis (viscosity, metal particles)\n• Generator brush inspection and replacement if worn\n• Blade visual inspection (cracks, erosion, lightning damage)\n• Safety system function test (emergency stop, fire suppression)\n• Lubrication of main bearing, yaw system, pitch bearings"
+  },
+  "Raise a work order for turbine T-247, fault FC-101, priority HIGH":{
+    tools:["⚡ workorder-tool → createWorkOrder (0.084s)"],
+    text:"Work order WO-42572873 created successfully.\n\nTurbine: T-247 | Fault: FC-101 | Priority: HIGH\nAssigned: Field Engineering Team - Palm Beach\nScheduled: 2026-07-05 08:00 UTC\nDuration: 6 hours\n\nParts required:\n• GB-FILTER-001 (Oil Filter) x1\n• Mobilgear SHC XMP 320 (200L)\n\nSafety requirements:\n• Lock-out Tag-out (LOTO) required\n• Harness and fall protection above 2m\n• Two-person minimum for gearbox work"
+  },
+  "What are the top failure modes for wind turbines?":{
+    tools:["⚡ turbine-knowledge-base → RAG lookup failure modes"],
+    text:"Top 5 failure modes by frequency:\n\n1. Gearbox oil system — 28% of failures\n2. Generator/electrical — 22% of failures\n3. Blade/pitch system — 18% of failures\n4. SCADA/sensors — 15% of failures\n5. Structural/mechanical — 10% of failures\n\nFleet MTBF: 2,200–2,800 hours\nFleet MTTR: 18–22 hours average"
+  },
+  "What spare parts should we keep in stock?":{
+    tools:["⚡ turbine-knowledge-base → RAG lookup spare parts"],
+    text:"Critical spare parts stock levels:\n\n• Gearbox oil filter (GB-FILTER-001): 50 units\n• Generator air filter (GEN-FILTER-003): 30 units\n• Main bearing set (GEN-BEAR-004): 5 units\n• Pitch motor (BLADE-MOTOR-005): 10 units\n• Oil pump (GB-PUMP-002): 8 units\n\nBased on turbine_maintenance_schedule.txt — Palm Beach & Desert Sunlight wind farms."
+  }
+};
+
+function addMsg(role,text,tools=[]){
+  const b=document.getElementById('chatBody');
+  const d=document.createElement('div');
+  d.className='message'+(role==='user'?' user':'');
+  const av=document.createElement('div');
+  av.className='msg-av '+(role==='user'?'us-av':'ag-av');
+  av.textContent=role==='user'?'👤':'🤖';
+  const bub=document.createElement('div');
+  bub.className='bubble';
+  tools.forEach(t=>{const tc=document.createElement('div');tc.className='tool-tag';tc.textContent=t;bub.appendChild(tc);});
+  const p=document.createElement('p');
+  p.textContent=text;
+  bub.appendChild(p);
+  d.appendChild(av);d.appendChild(bub);
+  b.appendChild(d);b.scrollTop=b.scrollHeight;
+}
+
+function addTyping(){
+  const b=document.getElementById('chatBody');
+  const d=document.createElement('div');
+  d.className='message';d.id='typing';
+  d.innerHTML='<div class="msg-av ag-av">🤖</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+  b.appendChild(d);b.scrollTop=b.scrollHeight;
+}
+
+function sendQ(q){document.getElementById('chatInput').value=q;sendMsg();}
+
+function sendMsg(){
+  const inp=document.getElementById('chatInput');
+  const q=inp.value.trim();if(!q)return;
+  inp.value='';
+  document.getElementById('sendBtn').disabled=true;
+  addMsg('user',q);
+  addTyping();
+  setTimeout(()=>{
+    document.getElementById('typing')?.remove();
+    const r=R[q];
+    if(r)addMsg('agent',r.text,r.tools);
+    else addMsg('agent','I can help with turbine monitoring, fault diagnosis (FC-001 to FC-601), maintenance schedules, spare parts, and work orders. Try one of the quick query buttons above!');
+    document.getElementById('sendBtn').disabled=false;
+  },1400);
+}
+</script>
+</body>
+</html>
