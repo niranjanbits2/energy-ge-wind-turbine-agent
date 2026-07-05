@@ -93,7 +93,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
     <div class="quick-queries">
       <button class="quick-btn" onclick="sendQ('Check the current status of turbine T-247')">📡 Check turbine T-247</button>
-      <button class="quick-btn" onclick="sendQ('What is fault code FC-101 and how do I fix it?')">🔍 FC-101 diagnosis</button>
+      <button class="quick-btn" onclick="sendQ('Diagnose fault code FC-101')">🔍 FC-101 diagnosis</button>
       <button class="quick-btn" onclick="sendQ('What is the quarterly maintenance schedule?')">📋 Maintenance schedule</button>
       <button class="quick-btn" onclick="sendQ('Raise a work order for turbine T-247, fault FC-101, priority HIGH')">🔧 Raise work order</button>
       <button class="quick-btn" onclick="sendQ('What are the top failure modes for wind turbines?')">📊 Failure modes</button>
@@ -156,7 +156,7 @@ const R={
     tools:["⚡ turbine-monitor → getTurbineTelemetry (0.075s)","⚡ turbine-knowledge-base → RAG lookup FC-101"],
     text:"Turbine T-247 is in a FAULT state — gearbox oil temperature exceeded 80°C (FC-101).\n\nTelemetry:\n• Wind speed: 14.2 m/s\n• Power output: 3.86 MW\n• Gearbox temp: 83.4°C ⚠️ (limit: 80°C)\n• Vibration: 7.2 mm/s\n• Rotor RPM: 11.8\n\nRoot cause: Oil cooler failure, low oil level, or blocked oil filter.\nRecommended action: Immediate shutdown and oil cooler inspection.\nMTTR: 4–6 hours."
   },
-  "What is fault code FC-101 and how do I fix it?":{
+  "Diagnose fault code FC-101":{
     tools:["⚡ turbine-knowledge-base → RAG lookup FC-101"],
     text:"FC-101: Gearbox Oil Temperature High\n\nDescription: Gearbox oil temperature exceeded the 80°C operating limit, triggering automatic shutdown.\n\nRoot causes:\n• Oil cooler failure\n• Low oil level\n• Blocked oil filter\n\nImmediate action: Shut down turbine. Inspect oil cooler and oil level.\n\nMaintenance: Replace oil filter (Part# GB-FILTER-001), check oil cooler fans.\n\nMTTR: 4–6 hours."
   },
